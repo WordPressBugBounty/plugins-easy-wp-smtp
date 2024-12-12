@@ -60,6 +60,10 @@ class Options {
 			'domain',
 			'region',
 		],
+		'mailjet'              => [
+			'api_key',
+			'secret_key',
+		],
 		'sendgrid'             => [
 			'api_key',
 			'domain',
@@ -78,39 +82,43 @@ class Options {
 		'smtp2go'              => [
 			'api_key',
 		],
-		'postmark'             => [
+		'postmark'              => [
 			'server_api_token',
 			'message_stream',
 		],
-		'sparkpost'            => [
+		'sparkpost'             => [
 			'api_key',
 			'region',
 		],
-		'zoho'                 => [
+		'zoho'                  => [
 			'domain',
 			'client_id',
 			'client_secret',
 		],
-		'license'              => [
+		'license'               => [
 			'key',
 		],
-		'alert_email'          => [
+		'alert_email'           => [
 			'enabled',
 			'connections',
 		],
-		'alert_slack_webhook'  => [
+		'alert_slack_webhook'   => [
 			'enabled',
 			'connections',
 		],
-		'alert_twilio_sms'     => [
+		'alert_discord_webhook' => [
 			'enabled',
 			'connections',
 		],
-		'alert_custom_webhook' => [
+		'alert_twilio_sms'      => [
 			'enabled',
 			'connections',
 		],
-		'alert_events'         => [
+		'alert_custom_webhook'  => [
+			'enabled',
+			'connections',
+		],
+		'alert_events'          => [
 			'email_hard_bounced',
 		],
 	];
@@ -129,6 +137,7 @@ class Options {
 		'amazonses',
 		'gmail',
 		'mailgun',
+		'mailjet',
 		'outlook',
 		'postmark',
 		'sendgrid',
@@ -588,6 +597,20 @@ class Options {
 
 				break;
 
+			case 'mailjet':
+				switch ( $key ) {
+					case 'api_key':
+						/** @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ? EASY_WP_SMTP_MAILJET_API_KEY : $value;
+						break;
+					case 'secret_key':
+						/** @noinspection PhpUndefinedConstantInspection */
+						$return = $this->is_const_defined( $group, $key ) ? EASY_WP_SMTP_MAILJET_SECRET_KEY : $value;
+						break;
+				}
+
+				break;
+
 			case 'sendgrid':
 				switch ( $key ) {
 					case 'api_key':
@@ -689,6 +712,15 @@ class Options {
 				switch ( $key ) {
 					case 'connections':
 						$return = $this->is_const_defined( $group, $key ) ? [ [ 'webhook_url' => EasyWPSMTP_ALERT_SLACK_WEBHOOK_URL ] ] : $value;
+						break;
+				}
+
+				break;
+
+			case 'alert_discord_webhook':
+				switch ( $key ) {
+					case 'connections':
+						$return = $this->is_const_defined( $group, $key ) ? [ [ 'webhook_url' => EasyWPSMTP_ALERT_DISCORD_WEBHOOK_URL ] ] : $value;
 						break;
 				}
 
@@ -927,6 +959,18 @@ class Options {
 
 				break;
 
+			case 'mailjet':
+				switch ( $key ) {
+					case 'api_key':
+						$return = defined( 'EASY_WP_SMTP_MAILJET_API_KEY' ) && EASY_WP_SMTP_MAILJET_API_KEY;
+						break;
+					case 'secret_key':
+						$return = defined( 'EASY_WP_SMTP_MAILJET_SECRET_KEY' ) && EASY_WP_SMTP_MAILJET_SECRET_KEY;
+						break;
+				}
+
+				break;
+
 			case 'sparkpost':
 				switch ( $key ) {
 					case 'api_key':
@@ -1018,6 +1062,14 @@ class Options {
 						break;
 				}
 
+				break;
+
+			case 'alert_discord_webhook':
+				switch ( $key ) {
+					case 'connections':
+						$return = defined( 'EasyWPSMTP_ALERT_DISCORD_WEBHOOK_URL' ) && EasyWPSMTP_ALERT_DISCORD_WEBHOOK_URL;
+						break;
+				}
 				break;
 
 			case 'alert_teams_webhook':
@@ -1256,7 +1308,7 @@ class Options {
 					case 'user': // smtp.
 					case 'encryption': // smtp.
 					case 'region': // mailgun/amazonses/sparkpost.
-					case 'api_key': // mailgun/sendinblue/smtpcom/sendlayer/sendgrid/sparkpost/smtp2go.
+					case 'api_key': // mailgun/sendinblue/smtpcom/sendlayer/sendgrid/sparkpost/smtp2go/mailjet.
 					case 'domain': // mailgun/sendinblue/sendgrid/zoho.
 					case 'channel': // smtpcom.
 					case 'client_id': // outlook/amazonses/zoho.
